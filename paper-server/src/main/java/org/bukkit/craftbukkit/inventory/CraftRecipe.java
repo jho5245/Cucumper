@@ -46,7 +46,7 @@ public interface CraftRecipe extends Recipe {
             // Paper end - support "empty" choices
         } else if (bukkit instanceof RecipeChoice.PredicateChoice predicateChoice) {
             stack = Ingredient.ofStacks(Collections.singletonList(CraftItemStack.asNMSCopy(predicateChoice.getItemStack())));
-            stack.stackPredicate = nmsStack -> predicateChoice.test(CraftItemStack.asBukkitCopy(nmsStack));
+            // stack.stackPredicate = nmsStack -> predicateChoice.test(CraftItemStack.asBukkitCopy(nmsStack));
         } else {
             throw new IllegalArgumentException("Unknown recipe stack instance " + bukkit);
         }
