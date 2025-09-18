@@ -1,0 +1,21 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: jho5245 <jho5245@naver.com>
+Date: Thu, 18 Sep 2025 12:23:50 +0900
+Subject: [PATCH] Add missing parameter 'expAmount' with default value 0
+
+
+diff --git a/net/minecraft/world/entity/ExperienceOrb.java b/net/minecraft/world/entity/ExperienceOrb.java
+index a62edee768c30c99213baa6bd736d67ae52b558c..1aa6108a08d11f2f33c1b349ead746ac765a2ae5 100644
+--- a/net/minecraft/world/entity/ExperienceOrb.java
++++ b/net/minecraft/world/entity/ExperienceOrb.java
+@@ -362,7 +362,9 @@ public class ExperienceOrb extends Entity {
+                 entity.take(this, 1);
+                 int i = this.repairPlayerItems(serverPlayer, this.getValue());
+                 if (i > 0) {
+-                    entity.giveExperiencePoints(org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerExpChangeEvent(entity, this).getAmount()); // CraftBukkit - this.value -> event.getAmount() // Paper - supply experience orb object
++                    // Cucumper start - add missing parameter 'expAmount' with default value 0.
++                    entity.giveExperiencePoints(org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerExpChangeEvent(entity, this, 0).getAmount()); // CraftBukkit - this.value -> event.getAmount() // Paper - supply experience orb object
++                    // Cucumper end
+                 }
+ 
+                 this.count--;
