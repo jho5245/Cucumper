@@ -1,0 +1,18 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: jho5245 <jho5245@naver.com>
+Date: Thu, 18 Sep 2025 12:04:01 +0900
+Subject: [PATCH] Edit Ingredient
+
+
+diff --git a/net/minecraft/world/item/crafting/Ingredient.java b/net/minecraft/world/item/crafting/Ingredient.java
+index 879c8fe1f20decc793cfa39e686b61d521bd76ba..cd1762e9e8c124a1e08c9551f4782b4ecf55b667 100644
+--- a/net/minecraft/world/item/crafting/Ingredient.java
++++ b/net/minecraft/world/item/crafting/Ingredient.java
+@@ -36,6 +36,7 @@ public final class Ingredient implements StackedContents.IngredientInfo<io.paper
+     // CraftBukkit start
+     @javax.annotation.Nullable
+     private java.util.Set<ItemStack> itemStacks; // Paper - Improve exact choice recipe ingredients
++    public Predicate<ItemStack> stackPredicate; // Cucumper - Add PredicateChoice
+ 
+     public boolean isExact() {
+         return this.itemStacks != null;
