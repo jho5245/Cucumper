@@ -1,0 +1,195 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: jho5245 <jho5245@naver.com>
+Date: Thu, 18 Sep 2025 12:14:29 +0900
+Subject: [PATCH] Edit Ingredient for method 2
+
+
+diff --git a/net/minecraft/world/item/crafting/Ingredient.java b/net/minecraft/world/item/crafting/Ingredient.java
+index 6b2bda82b5e33ffaf19326d1a52f8d9004333bdb..f3f770918cb12a6507d665a4b2f97ca19bcd1eba 100644
+--- a/net/minecraft/world/item/crafting/Ingredient.java
++++ b/net/minecraft/world/item/crafting/Ingredient.java
+@@ -21,38 +21,34 @@ import net.minecraft.world.item.Items;
+ import net.minecraft.world.item.crafting.display.SlotDisplay;
+ import net.minecraft.world.level.ItemLike;
+ 
+-public final class Ingredient implements StackedContents.IngredientInfo<io.papermc.paper.inventory.recipe.ItemOrExact>, Predicate<ItemStack> { // Paper - Improve exact choice recipe ingredients
+-    public static final StreamCodec<RegistryFriendlyByteBuf, Ingredient> CONTENTS_STREAM_CODEC = ByteBufCodecs.holderSet(Registries.ITEM)
+-        .map(Ingredient::new, ingredient -> ingredient.values);
+-    public static final StreamCodec<RegistryFriendlyByteBuf, Optional<Ingredient>> OPTIONAL_CONTENTS_STREAM_CODEC = ByteBufCodecs.holderSet(Registries.ITEM)
++public final class Ingredient implements net.minecraft.world.entity.player.StackedContents.IngredientInfo<io.papermc.paper.inventory.recipe.ItemOrExact>, java.util.function.Predicate<net.minecraft.world.item.ItemStack> { // Paper - Improve exact choice recipe ingredients
++    public static final net.minecraft.network.codec.StreamCodec<net.minecraft.network.RegistryFriendlyByteBuf, net.minecraft.world.item.crafting.Ingredient> CONTENTS_STREAM_CODEC = net.minecraft.network.codec.ByteBufCodecs.holderSet(net.minecraft.core.registries.Registries.ITEM)
++        .map(net.minecraft.world.item.crafting.Ingredient::new, ingredient -> ingredient.values);
++    public static final net.minecraft.network.codec.StreamCodec<net.minecraft.network.RegistryFriendlyByteBuf, java.util.Optional<net.minecraft.world.item.crafting.Ingredient>> OPTIONAL_CONTENTS_STREAM_CODEC = net.minecraft.network.codec.ByteBufCodecs.holderSet(net.minecraft.core.registries.Registries.ITEM)
+         .map(
+-            items -> items.size() == 0 ? Optional.empty() : Optional.of(new Ingredient((HolderSet<Item>)items)),
+-            optional -> optional.map(ingredient -> ingredient.values).orElse(HolderSet.direct())
++            items -> items.size() == 0 ? java.util.Optional.empty() : java.util.Optional.of(new net.minecraft.world.item.crafting.Ingredient((net.minecraft.core.HolderSet<net.minecraft.world.item.Item>)items)),
++            optional -> optional.map(ingredient -> ingredient.values).orElse(net.minecraft.core.HolderSet.direct())
+         );
+-    public static final Codec<HolderSet<Item>> NON_AIR_HOLDER_SET_CODEC = HolderSetCodec.create(Registries.ITEM, Item.CODEC, false);
+-    public static final Codec<Ingredient> CODEC = ExtraCodecs.nonEmptyHolderSet(NON_AIR_HOLDER_SET_CODEC)
+-        .xmap(Ingredient::new, ingredient -> ingredient.values);
+-    private final HolderSet<Item> values;
++    public static final com.mojang.serialization.Codec<net.minecraft.core.HolderSet<net.minecraft.world.item.Item>> NON_AIR_HOLDER_SET_CODEC = net.minecraft.resources.HolderSetCodec.create(net.minecraft.core.registries.Registries.ITEM, net.minecraft.world.item.Item.CODEC, false);
++    public static final com.mojang.serialization.Codec<net.minecraft.world.item.crafting.Ingredient> CODEC = net.minecraft.util.ExtraCodecs.nonEmptyHolderSet(NON_AIR_HOLDER_SET_CODEC)
++        .xmap(net.minecraft.world.item.crafting.Ingredient::new, ingredient -> ingredient.values);
++    private final net.minecraft.core.HolderSet<net.minecraft.world.item.Item> values;
+     // CraftBukkit start
+     @javax.annotation.Nullable
+-    private java.util.Set<ItemStack> itemStacks; // Paper - Improve exact choice recipe ingredients
+-<<<<<<< Updated upstream
+-    public Predicate<ItemStack> stackPredicate; // Cucumper - Add PredicateChoice
+-=======
+-    public Predicate<ItemStack> stackPredicate;
+->>>>>>> Stashed changes
++    private java.util.Set<net.minecraft.world.item.ItemStack> itemStacks; // Paper - Improve exact choice recipe ingredients
++    public java.util.function.Predicate<net.minecraft.world.item.ItemStack> stackPredicate; // Cucumper - Add PredicateChoice
+ 
+     public boolean isExact() {
+         return this.itemStacks != null;
+     }
+ 
+     @javax.annotation.Nullable
+-    public java.util.Set<ItemStack> itemStacks() { // Paper - Improve exact choice recipe ingredients
++    public java.util.Set<net.minecraft.world.item.ItemStack> itemStacks() { // Paper - Improve exact choice recipe ingredients
+         return this.itemStacks;
+     }
+ 
+-    public static Ingredient ofStacks(java.util.List<ItemStack> stacks) {
+-        Ingredient recipe = Ingredient.of(stacks.stream().map(ItemStack::getItem));
++    public static net.minecraft.world.item.crafting.Ingredient ofStacks(java.util.List<net.minecraft.world.item.ItemStack> stacks) {
++        net.minecraft.world.item.crafting.Ingredient recipe = net.minecraft.world.item.crafting.Ingredient.of(stacks.stream().map(net.minecraft.world.item.ItemStack::getItem));
+         // Paper start - Improve exact choice recipe ingredients
+         recipe.itemStacks = net.minecraft.world.item.ItemStackLinkedSet.createTypeAndComponentsSet();
+         recipe.itemStacks.addAll(stacks);
+@@ -62,23 +58,24 @@ public final class Ingredient implements StackedContents.IngredientInfo<io.paper
+     }
+     // CraftBukkit end
+ 
+-    private Ingredient(HolderSet<Item> values) {
++    private Ingredient(net.minecraft.core.HolderSet<net.minecraft.world.item.Item> values) {
+         values.unwrap().ifRight(list -> {
+             if (list.isEmpty()) {
+                 throw new UnsupportedOperationException("Ingredients can't be empty");
+-            } else if (list.contains(Items.AIR.builtInRegistryHolder())) {
++            } else if (list.contains(net.minecraft.world.item.Items.AIR.builtInRegistryHolder())) {
+                 throw new UnsupportedOperationException("Ingredient can't contain air");
+             }
+         });
+         this.values = values;
++        stackPredicate = null;
+     }
+ 
+-    public static boolean testOptionalIngredient(Optional<Ingredient> ingredient, ItemStack stack) {
++    public static boolean testOptionalIngredient(java.util.Optional<net.minecraft.world.item.crafting.Ingredient> ingredient, net.minecraft.world.item.ItemStack stack) {
+         return ingredient.<Boolean>map(ingredient1 -> ingredient1.test(stack)).orElseGet(stack::isEmpty);
+     }
+ 
+     @Deprecated
+-    public Stream<Holder<Item>> items() {
++    public java.util.stream.Stream<net.minecraft.core.Holder<net.minecraft.world.item.Item>> items() {
+         return this.values.stream();
+     }
+ 
+@@ -86,12 +83,21 @@ public final class Ingredient implements StackedContents.IngredientInfo<io.paper
+         return this.values.size() == 0;
+     }
+ 
++    public boolean isPredicate() {
++        return this.stackPredicate != null;
++    }
++
+     @Override
+-    public boolean test(ItemStack stack) {
++    public boolean test(net.minecraft.world.item.ItemStack stack) {
+         // CraftBukkit start
+         if (this.isExact()) {
+             return this.itemStacks.contains(stack); // Paper - Improve exact choice recipe ingredients (hashing FTW!)
+         }
++        // Cucumper start - Add PredicateChoice
++        else if (this.isPredicate()) {
++            return this.stackPredicate.test(stack);
++        }
++        // Cucumper end
+         // CraftBukkit end
+         return stack.is(this.values);
+     }
+@@ -100,9 +106,9 @@ public final class Ingredient implements StackedContents.IngredientInfo<io.paper
+     @Override
+     public boolean acceptsItem(final io.papermc.paper.inventory.recipe.ItemOrExact itemOrExact) {
+         return switch (itemOrExact) {
+-            case io.papermc.paper.inventory.recipe.ItemOrExact.Item(final Holder<Item> item) ->
++            case io.papermc.paper.inventory.recipe.ItemOrExact.Item(final net.minecraft.core.Holder<net.minecraft.world.item.Item> item) ->
+                 !this.isExact() && this.values.contains(item);
+-            case io.papermc.paper.inventory.recipe.ItemOrExact.Exact(final ItemStack exact) ->
++            case io.papermc.paper.inventory.recipe.ItemOrExact.Exact(final net.minecraft.world.item.ItemStack exact) ->
+                 this.isExact() && this.itemStacks.contains(exact);
+         };
+         // Paper end - Improve exact choice recipe ingredients
+@@ -110,46 +116,46 @@ public final class Ingredient implements StackedContents.IngredientInfo<io.paper
+ 
+     @Override
+     public boolean equals(Object other) {
+-        return other instanceof Ingredient ingredient && Objects.equals(this.values, ingredient.values) && Objects.equals(this.itemStacks, ingredient.itemStacks); // CraftBukkit
++        return other instanceof net.minecraft.world.item.crafting.Ingredient ingredient && java.util.Objects.equals(this.values, ingredient.values) && java.util.Objects.equals(this.itemStacks, ingredient.itemStacks); // CraftBukkit
+     }
+ 
+-    public static Ingredient of(ItemLike item) {
+-        return new Ingredient(HolderSet.direct(item.asItem().builtInRegistryHolder()));
++    public static net.minecraft.world.item.crafting.Ingredient of(net.minecraft.world.level.ItemLike item) {
++        return new net.minecraft.world.item.crafting.Ingredient(net.minecraft.core.HolderSet.direct(item.asItem().builtInRegistryHolder()));
+     }
+ 
+-    public static Ingredient of(ItemLike... items) {
+-        return of(Arrays.stream(items));
++    public static net.minecraft.world.item.crafting.Ingredient of(net.minecraft.world.level.ItemLike... items) {
++        return of(java.util.Arrays.stream(items));
+     }
+ 
+-    public static Ingredient of(Stream<? extends ItemLike> items) {
+-        return new Ingredient(HolderSet.direct(items.map(item -> item.asItem().builtInRegistryHolder()).toList()));
++    public static net.minecraft.world.item.crafting.Ingredient of(java.util.stream.Stream<? extends net.minecraft.world.level.ItemLike> items) {
++        return new net.minecraft.world.item.crafting.Ingredient(net.minecraft.core.HolderSet.direct(items.map(item -> item.asItem().builtInRegistryHolder()).toList()));
+     }
+ 
+-    public static Ingredient of(HolderSet<Item> items) {
+-        return new Ingredient(items);
++    public static net.minecraft.world.item.crafting.Ingredient of(net.minecraft.core.HolderSet<net.minecraft.world.item.Item> items) {
++        return new net.minecraft.world.item.crafting.Ingredient(items);
+     }
+ 
+-    public SlotDisplay display() {
++    public net.minecraft.world.item.crafting.display.SlotDisplay display() {
+         // Paper start - show exact ingredients in recipe book
+         if (this.isExact()) {
+-            return new SlotDisplay.Composite(this.itemStacks().stream().<SlotDisplay>map(SlotDisplay.ItemStackSlotDisplay::new).toList());
++            return new net.minecraft.world.item.crafting.display.SlotDisplay.Composite(this.itemStacks().stream().<net.minecraft.world.item.crafting.display.SlotDisplay>map(net.minecraft.world.item.crafting.display.SlotDisplay.ItemStackSlotDisplay::new).toList());
+         }
+         // Paper end - show exact ingredients in recipe book
+-        return (SlotDisplay)this.values
++        return (net.minecraft.world.item.crafting.display.SlotDisplay)this.values
+             .unwrap()
+-            .map(SlotDisplay.TagSlotDisplay::new, list -> new SlotDisplay.Composite(list.stream().map(Ingredient::displayForSingleItem).toList()));
++            .map(net.minecraft.world.item.crafting.display.SlotDisplay.TagSlotDisplay::new, list -> new net.minecraft.world.item.crafting.display.SlotDisplay.Composite(list.stream().map(net.minecraft.world.item.crafting.Ingredient::displayForSingleItem).toList()));
+     }
+ 
+-    public static SlotDisplay optionalIngredientToDisplay(Optional<Ingredient> ingredient) {
+-        return ingredient.map(Ingredient::display).orElse(SlotDisplay.Empty.INSTANCE);
++    public static net.minecraft.world.item.crafting.display.SlotDisplay optionalIngredientToDisplay(java.util.Optional<net.minecraft.world.item.crafting.Ingredient> ingredient) {
++        return ingredient.map(net.minecraft.world.item.crafting.Ingredient::display).orElse(net.minecraft.world.item.crafting.display.SlotDisplay.Empty.INSTANCE);
+     }
+ 
+-    private static SlotDisplay displayForSingleItem(Holder<Item> item) {
+-        SlotDisplay slotDisplay = new SlotDisplay.ItemSlotDisplay(item);
+-        ItemStack craftingRemainder = item.value().getCraftingRemainder();
++    private static net.minecraft.world.item.crafting.display.SlotDisplay displayForSingleItem(net.minecraft.core.Holder<net.minecraft.world.item.Item> item) {
++        net.minecraft.world.item.crafting.display.SlotDisplay slotDisplay = new net.minecraft.world.item.crafting.display.SlotDisplay.ItemSlotDisplay(item);
++        net.minecraft.world.item.ItemStack craftingRemainder = item.value().getCraftingRemainder();
+         if (!craftingRemainder.isEmpty()) {
+-            SlotDisplay slotDisplay1 = new SlotDisplay.ItemStackSlotDisplay(craftingRemainder);
+-            return new SlotDisplay.WithRemainder(slotDisplay, slotDisplay1);
++            net.minecraft.world.item.crafting.display.SlotDisplay slotDisplay1 = new net.minecraft.world.item.crafting.display.SlotDisplay.ItemStackSlotDisplay(craftingRemainder);
++            return new net.minecraft.world.item.crafting.display.SlotDisplay.WithRemainder(slotDisplay, slotDisplay1);
+         } else {
+             return slotDisplay;
+         }
