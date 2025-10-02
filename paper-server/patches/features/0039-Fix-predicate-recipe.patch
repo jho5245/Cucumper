@@ -1,0 +1,26 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: jho5245 <jho5245@naver.com>
+Date: Thu, 2 Oct 2025 13:33:42 +0900
+Subject: [PATCH] Fix predicate recipe
+
+
+diff --git a/net/minecraft/world/item/crafting/Ingredient.java b/net/minecraft/world/item/crafting/Ingredient.java
+index f3f770918cb12a6507d665a4b2f97ca19bcd1eba..f55c62cebf54d18ca6ef1afe0c6a30220df775bd 100644
+--- a/net/minecraft/world/item/crafting/Ingredient.java
++++ b/net/minecraft/world/item/crafting/Ingredient.java
+@@ -108,8 +108,13 @@ public final class Ingredient implements net.minecraft.world.entity.player.Stack
+         return switch (itemOrExact) {
+             case io.papermc.paper.inventory.recipe.ItemOrExact.Item(final net.minecraft.core.Holder<net.minecraft.world.item.Item> item) ->
+                 !this.isExact() && this.values.contains(item);
+-            case io.papermc.paper.inventory.recipe.ItemOrExact.Exact(final net.minecraft.world.item.ItemStack exact) ->
+-                this.isExact() && this.itemStacks.contains(exact);
++            case io.papermc.paper.inventory.recipe.ItemOrExact.Exact(final net.minecraft.world.item.ItemStack exact) -> {
++                if (isPredicate()) {
++                    yield this.stackPredicate.test(exact);
++                }
++                yield this.isExact() && this.itemStacks.contains(exact);
++            }
++            }
+         };
+         // Paper end - Improve exact choice recipe ingredients
+     }
